@@ -1,9 +1,9 @@
-name: Criar diretório no Ubuntu
+name: Criar diretório e arquivo no Ubuntu
 
 on:
   push:
     branches:
-      - feature/criar-diretorio  # A pipeline será disparada quando houver push na branch 'feature/criar-diretorio'
+      - feature/criar-arquivo  # A pipeline será disparada quando houver push na branch 'feature/criar-arquivo'
 
 jobs:
   deploy:
@@ -27,3 +27,13 @@ jobs:
           ssh -o StrictHostKeyChecking=no jaime@servidores-linux.70-71-bc-12-b3-87@cloud.shellhub.io "mkdir -p /home/jaime/novo_diretorio"
           
           echo "Diretório criado com sucesso!"
+
+      - name: Criar arquivo dentro do diretório no servidor
+        run: |
+          set -e  # Faz com que o script pare imediatamente em caso de erro
+          echo "Criando o arquivo dentro do diretório..."
+          
+          # Criando um arquivo dentro do diretório
+          ssh -o StrictHostKeyChecking=no jaime@servidores-linux.70-71-bc-12-b3-87@cloud.shellhub.io "echo 'Conteúdo do arquivo criado pela pipeline' > /home/jaime/novo_diretorio/novo_arquivo.txt"
+          
+          echo "Arquivo criado com sucesso dentro do diretório!"
