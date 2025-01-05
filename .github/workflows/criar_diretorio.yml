@@ -3,34 +3,27 @@ name: Criar diretório no Ubuntu
 on:
   push:
     branches:
-      - feature/criar-diretorio
+      - feature/criar-diretorio  # A pipeline será disparada quando houver push na branch 'feature/criar-diretorio'
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # A execução do job ocorrerá em uma máquina Ubuntu
 
     steps:
       - name: Checar o repositório
-        uses: actions/checkout@v2
+        uses: actions/checkout@v2  # Baixa o código do repositório
 
       - name: Configurar chave SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usando a chave privada configurada no GitHub Secrets
 
       - name: Criar diretório no servidor
         run: |
           set -e  # Faz com que o script pare imediatamente em caso de erro
           echo "Iniciando conexão SSH..."
           
-          # Verifica se a chave SSH está configurada corretamente
-          if [ ! -f ~/.ssh/id_ed25519 ]; then
-            echo "Erro: A chave SSH não foi encontrada!"
-            exit 1
-          fi
-          
-          echo "Tentando criar o diretório no servidor..."
-          
-          ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no jaime@servidores-linux.70-71-bc-12-b3-87@cloud.shellhub.io "mkdir -p /home/jaime/novo_diretorio"
+          # Tentando criar o diretório no servidor
+          ssh -o StrictHostKeyChecking=no jaime@servidores-linux.70-71-bc-12-b3-87@cloud.shellhub.io "mkdir -p /home/jaime/novo_diretorio"
           
           echo "Diretório criado com sucesso!"
