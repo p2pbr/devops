@@ -51,14 +51,12 @@ jobs:
 
       - name: Executar Terraform Plan
         run: |
-          terraform plan  # Exibe o plano de execução para o Terraform
+          terraform plan -var "ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }}"  # Passa a chave SSH como variável para o Terraform
 
       - name: Aplicar Terraform
-        env:
-          TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  # Passando a chave SSH como variável para o Terraform
         run: |
           set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform apply -auto-approve  # Aplica as mudanças definidas no Terraform
+          terraform apply -auto-approve -var "ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }}"  # Aplica as mudanças e passa a chave SSH
 
       - name: Finalizar com sucesso
         if: success()  # Esta etapa só executa se todos os passos anteriores tiverem sido bem-sucedidos
