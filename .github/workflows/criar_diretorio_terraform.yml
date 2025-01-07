@@ -39,19 +39,20 @@ jobs:
           # Tentar instalar o Terraform
           sudo apt-get install -y terraform
 
+      - name: Inicializar o Terraform
+        run: |
+          set -e  # Faz com que o script pare imediatamente em caso de erro
+          terraform init  # Inicializa o Terraform, baixa os provedores e configura o ambiente
+
       - name: Validar Terraform
         run: |
           set -e  # Faz com que o script pare imediatamente em caso de erro
           terraform validate  # Valida os arquivos do Terraform
 
-      - name: Inicializar Terraform
-        run: |
-          terraform init  # Inicializa o Terraform
-
       - name: Executar Terraform Plan
         run: |
           terraform plan  # Exibe o plano de execução para o Terraform
-          
+
       - name: Aplicar Terraform
         env:
           TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  # Passando a chave SSH como variável para o Terraform
