@@ -10,8 +10,8 @@ resource "null_resource" "create_directory_and_file" {
 
   provisioner "remote-exec" {
     inline = [
-      "mkdir -p /home/jaime/novo_diretorio_terraform",  # Criar o diretório
-      "echo 'Este é o conteúdo do arquivo' > /home/jaime/novo_diretorio_terraform/arquivo.txt"  # Criar o arquivo
+      "mkdir -p /home/jaime/novo_diretorio_terraform",
+      "echo 'Este é o conteúdo do arquivo' > /home/jaime/novo_diretorio_terraform/arquivo.txt"
     ]
   }
 }

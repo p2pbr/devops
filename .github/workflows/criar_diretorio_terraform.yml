@@ -3,67 +3,59 @@ name: Executar Terraform para Criar Diretório e Arquivo no Ubuntu
 on:
   push:
     branches:
-      - feature/criar-diretorio-terraform  # A pipeline será disparada quando houver push na branch 'feature/criar-diretorio-terraform'
+      - feature/criar-diretorio-terraform
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest  # A execução do job ocorrerá em uma máquina Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checar o repositório
-        uses: actions/checkout@v2  # Baixa o código do repositório
+        uses: actions/checkout@v2
 
       - name: Configurar chave SSH
         uses: webfactory/ssh-agent@v0.5.3
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usando a chave privada configurada no GitHub Secrets
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Tentar Instalar o Terraform via apt
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
+          set -e
           echo "Tentando instalar o Terraform via apt..."
-
-          # Atualizar o apt e instalar dependências necessárias
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https gnupg
-
-          # Baixar e adicionar a chave GPG do HashiCorp
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          
-          # Adicionar o repositório HashiCorp ao sources.list.d
           echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          
-          # Atualizar novamente os pacotes do apt
           sudo apt-get update
-          
-          # Tentar instalar o Terraform
           sudo apt-get install -y terraform
 
       - name: Inicializar o Terraform
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform init  # Inicializa o Terraform, baixa os provedores e configura o ambiente
+          set -e
+          terraform init
 
       - name: Validar Terraform
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform validate  # Valida os arquivos do Terraform
+          set -e
+          terraform validate
 
       - name: Executar Terraform Plan
         run: |
-          terraform plan -var "ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }}"  # Passa a chave SSH como variável para o Terraform
-
+          export TF_VAR_ssh_private_key="${{ secrets.SSH_PRIVATE_KEY }}"
+          terraform plan
+        
       - name: Aplicar Terraform
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform apply -auto-approve -var "ssh_private_key=${{ secrets.SSH_PRIVATE_KEY }}"  # Aplica as mudanças e passa a chave SSH
+          set -e
+          export TF_VAR_ssh_private_key="${{ secrets.SSH_PRIVATE_KEY }}"
+          terraform apply -auto-approve
 
       - name: Finalizar com sucesso
-        if: success()  # Esta etapa só executa se todos os passos anteriores tiverem sido bem-sucedidos
+        if: success()
         run: echo "Terraform executado com sucesso. Diretório e arquivo criados."
 
       - name: Exibir mensagem de erro se houver falha
-        if: failure()  # Esta etapa só executa se algum passo anterior falhar
+        if: failure()
         run: |
           echo "### ERRO NA EXECUÇÃO DO TERRAFORM ###"
           echo "Houve um erro durante a execução do Terraform. Verifique os logs acima para mais detalhes."
