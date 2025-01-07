@@ -18,23 +18,17 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usando a chave privada configurada no GitHub Secrets
 
-      - name: Instalar Terraform
+      - name: Instalar Terraform com o script oficial do HashiCorp
         run: |
-          # Atualizando a lista de pacotes
-          sudo apt-get update
+          # Atualizando o sistema
+          sudo apt-get update -y
           
-          # Instalando dependências necessárias, incluindo curl e libcurl4
-          sudo apt-get install -y gnupg software-properties-common curl libcurl4
+          # Instalando dependências necessárias
+          sudo apt-get install -y gnupg software-properties-common curl
 
-          # Atualizando curl e libcurl4 para a versão mais recente
-          sudo apt-get upgrade -y curl libcurl4
-
-          # Adicionando o repositório oficial do HashiCorp
+          # Baixando e instalando o Terraform diretamente do script oficial do HashiCorp
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          sudo apt-get update  # Atualizando novamente a lista de pacotes com o repositório do HashiCorp
-
-          # Instalando o Terraform
-          sudo apt-get install -y terraform  # Instalando o Terraform
+          sudo apt-get update && sudo apt-get install -y terraform  # Instalar Terraform via apt
 
       - name: Validar Terraform
         run: |
