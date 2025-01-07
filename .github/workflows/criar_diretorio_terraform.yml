@@ -3,52 +3,50 @@ name: Executar Terraform para Criar Diretório e Arquivo no Ubuntu
 on:
   push:
     branches:
-      - feature/criar-diretorio-terraform  # A pipeline será disparada quando houver push na branch 'feature/criar-diretorio-terraform'
+      - feature/criar-diretorio-terraform
 
 jobs:
   terraform:
-    runs-on: ubuntu-latest  # A execução do job ocorrerá em uma máquina Ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checar o repositório
-        uses: actions/checkout@v2  # Baixa o código do repositório
+        uses: actions/checkout@v2
 
       - name: Configurar chave SSH
-        uses: webfactory/ssh-agent@v0.5.3
+        uses: actions/setup-ssh@v4
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}  # Usando a chave privada configurada no GitHub Secrets
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Configurar Terraform
-        uses: hashicorp/setup-terraform@v1  # Instala o Terraform no ambiente de execução
+        uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: '1.5.0'  # Especifique a versão do Terraform que você deseja usar (opcional)
+          terraform_version: '1.5.0'
 
       - name: Validar Terraform
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform validate  # Valida os arquivos do Terraform
+          set -e
+          terraform validate
 
       - name: Inicializar Terraform
         run: |
-          terraform init  # Inicializa o Terraform
+          terraform init
 
       - name: Executar Terraform Plan
         run: |
-          terraform plan  # Exibe o plano de execução para o Terraform
+          terraform plan
           
       - name: Aplicar Terraform
-        env:
-          TF_VAR_ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}  # Passando a chave SSH como variável para o Terraform
         run: |
-          set -e  # Faz com que o script pare imediatamente em caso de erro
-          terraform apply -auto-approve  # Aplica as mudanças definidas no Terraform
+          set -e
+          terraform apply -auto-approve
 
       - name: Finalizar com sucesso
-        if: success()  # Esta etapa só executa se todos os passos anteriores tiverem sido bem-sucedidos
+        if: success()
         run: echo "Terraform executado com sucesso. Diretório e arquivo criados."
 
       - name: Exibir mensagem de erro se houver falha
-        if: failure()  # Esta etapa só executa se algum passo anterior falhar
+        if: failure()
         run: |
           echo "### ERRO NA EXECUÇÃO DO TERRAFORM ###"
           echo "Houve um erro durante a execução do Terraform. Verifique os logs acima para mais detalhes."
