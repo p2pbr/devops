@@ -23,12 +23,18 @@ jobs:
           # Atualizando a lista de pacotes
           sudo apt-get update
           
-          # Instalando dependências necessárias
-          sudo apt-get install -y gnupg software-properties-common curl
+          # Instalando dependências necessárias, incluindo curl e libcurl4
+          sudo apt-get install -y gnupg software-properties-common curl libcurl4
+
+          # Atualizando curl e libcurl4 para a versão mais recente
+          sudo apt-get upgrade -y curl libcurl4
 
           # Adicionando o repositório oficial do HashiCorp
           curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          sudo apt-get update && sudo apt-get install -y terraform  # Instalando o Terraform
+          sudo apt-get update  # Atualizando novamente a lista de pacotes com o repositório do HashiCorp
+
+          # Instalando o Terraform
+          sudo apt-get install -y terraform  # Instalando o Terraform
 
       - name: Validar Terraform
         run: |
