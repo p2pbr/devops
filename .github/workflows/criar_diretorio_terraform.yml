@@ -20,9 +20,15 @@ jobs:
 
       - name: Instalar Terraform
         run: |
+          # Atualizando a lista de pacotes
           sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          sudo apt-get install -y terraform
+          
+          # Instalando dependências necessárias
+          sudo apt-get install -y gnupg software-properties-common curl
+
+          # Adicionando o repositório oficial do HashiCorp
+          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          sudo apt-get update && sudo apt-get install -y terraform  # Instalando o Terraform
 
       - name: Validar Terraform
         run: |
