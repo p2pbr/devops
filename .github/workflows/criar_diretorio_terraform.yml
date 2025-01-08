@@ -18,10 +18,10 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: Tentar Instalar o Terraform via apt
+      - name: Instalar o Terraform
         run: |
           set -e
-          echo "Tentando instalar o Terraform via apt..."
+          echo "Instalando o Terraform..."
           sudo apt-get update
           sudo apt-get install -y wget apt-transport-https gnupg
           wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
@@ -43,7 +43,7 @@ jobs:
         run: |
           export TF_VAR_ssh_private_key="${{ secrets.SSH_PRIVATE_KEY }}"
           terraform plan
-        
+
       - name: Aplicar Terraform
         run: |
           set -e

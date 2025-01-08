@@ -3,9 +3,10 @@ provider "null" {}
 resource "null_resource" "create_directory_and_file" {
   connection {
     type        = "ssh"
-    host        = "servidores-linux.70-71-bc-12-b3-87@cloud.shellhub.io"
+    host        = "cloud.shellhub.io"
     user        = "jaime"
-    private_key = var.ssh_private_key  # Usando a chave privada do GitHub Secrets
+    private_key = var.ssh_private_key  # Chave privada passada como variável
+    port        = 22                   # Garantindo que a porta SSH padrão seja usada
   }
 
   provisioner "remote-exec" {
@@ -19,4 +20,9 @@ resource "null_resource" "create_directory_and_file" {
 # Variáveis
 variable "ssh_private_key" {
   type = string
+}
+
+# Output para verificar o caminho da chave
+output "ssh_private_key" {
+  value = var.ssh_private_key
 }
