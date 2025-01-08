@@ -59,3 +59,4 @@ jobs:
         run: |
           echo "### ERRO NA EXECUÇÃO DO TERRAFORM ###"
           echo "Houve um erro durante a execução do Terraform. Verifique os logs acima para mais detalhes."
+
