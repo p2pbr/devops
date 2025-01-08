@@ -3,7 +3,7 @@ name: Executar Terraform para Criar Diretório e Arquivo no Ubuntu
 on:
   push:
     branches:
-      - feature/criar-diretorio-terraform
+      - feature/criatr-diretorio-terraform-gpt
 
 jobs:
   terraform:
